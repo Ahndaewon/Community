@@ -1,6 +1,8 @@
 package com.ktds.member.web;
 
 import java.io.Reader;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.ServletRequest;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ktds.community.constants.Member;
@@ -40,6 +43,49 @@ public class MemberController {
 		this.memberService = memberService;
 	}
 	
+	
+	//어떠한 데이터도 넣을 수 있다. json형태로 값을 넘겨준다. 객체리너럴을 하나의 문자의 형태로 보내줌 JSON
+	//모든 언어들이 JSON지원 서버가 다르고 언어들이 다른때 전송을 위해 사용
+	//라이브러리 하나 추가 필요 pom.xml
+	//jackson-databind 추가 해당라이브러리가 ResponseBody가 있으면 JSON형태로 변화해줌
+	//타입 bundle 지워줌
+	@RequestMapping("/api/exists/email")//ajax는 리턴타입이 여러가지
+	@ResponseBody  
+	public Map<String, Boolean> apiIsExistsEmail(@RequestParam String email){
+		
+		boolean isExists = memberService.readCountMemberEmail(email);
+		
+		Map<String, Boolean> response = new HashMap<String, Boolean>();
+		
+		response.put("response", isExists);
+		
+		return response;
+		
+		/*{
+		 * 	"isExists" : true
+		 * } 이러한 형태로 값을 보내줄거임
+		 *
+		 */
+	}
+	
+	@RequestMapping("/api/exists/nickname")
+	@ResponseBody
+	public Map<String, Boolean> apiIsExistsNickname(@RequestParam String nickname){
+
+		boolean isExist = memberService.readCountMemberNickname(nickname);
+		
+		Map<String, Boolean> response = new HashMap<String, Boolean>();
+		
+		response.put("response", isExist);
+		
+		
+		
+		return response;
+	}
+	
+	
+	
+	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String viewLoginPage(HttpSession sesstion) { //세션을 바로 가지고 올 수 있음
 		
@@ -49,6 +95,8 @@ public class MemberController {
 		
 		return "member/login";
 	}
+	
+	
 	
 	
 	@RequestMapping(value = "/regist", method = RequestMethod.GET)
@@ -71,6 +119,8 @@ public class MemberController {
 		
 		return new ModelAndView("redirect:/login");
 	}
+	
+	
 	
 	@RequestMapping(value="/login", method=RequestMethod.POST)
 	public String doLoginAction(@ModelAttribute("loginForm") @Valid MemberVO memberVO, 
@@ -219,6 +269,8 @@ public class MemberController {
 		
 		
 	}
+	
+	
 	
 
 

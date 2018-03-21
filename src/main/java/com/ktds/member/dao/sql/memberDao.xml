@@ -12,6 +12,7 @@
 			, NICKNAME
 			, PASSWORD
 			, REGIST_DATE
+			, SALT
 		
 		)
 		VALUES (
@@ -20,6 +21,7 @@
 			, #{nickname}
 			, #{password}
 			, SYSDATE
+			, #{salt}
 		)
 	</insert>
 	
@@ -29,6 +31,7 @@
 			    , EMAIL
 			    , NICKNAME
 			    , REGIST_DATE
+			    , SALT
 		FROM	MEMBER
 		WHERE	EMAIL = #{email}
 		AND		PASSWORD = #{password}
@@ -39,6 +42,31 @@
   		FROM	MEMBER 
   		WHERE	ID = #{id}
   	</delete>
+  	
+  	<select id="selectSalt" parameterType="string" resultType="string">
+  		
+  		SELECT	NVL(SALT, '')<!-- SALT가  null 이면 공백을 줘라 홋따옴표 -->
+  		FROM	MEMBER
+  		WHERE	EMAIL = #{email}
+  	
+  	</select>
+  	
+  	<select id="selectCountMemberEmail" parameterType="string" resultType="_int">
+  	
+  		SELECT	COUNT(ID)
+  		FROM	MEMBER
+  		WHERE	EMAIL = #{email}
+  	
+  	</select>
+  	
+  	
+  	<select id="selectCountMemberNickname" parameterType="string" resultType="_int">
+  	
+  		SELECT	COUNT(ID)
+  		FROM	MEMBER
+  		WHERE	NICKNAME = #{nickname}
+  	
+  	</select>
   
   </mapper>
   

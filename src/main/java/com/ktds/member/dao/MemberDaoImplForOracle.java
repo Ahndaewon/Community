@@ -27,4 +27,25 @@ public class MemberDaoImplForOracle
 		return getSqlSession().delete("MemberDao.deleteMember", id);
 	}
 
+	@Override
+	public String selectSalt(String email) {
+		return getSqlSession().selectOne("MemberDao.selectSalt", email);
+	}
+
+	@Override
+	public int selectCountMemberEmail(String email) {
+		
+		return getSqlSession().selectOne("MemberDao.selectCountMemberEmail", email);
+	}
+
+	@Override
+	public int selectCountMemberNickname(String nickname) {
+		
+		return getSqlSession().selectOne("MemberDao.selectCountMemberNickname",nickname );
+	}
+
+
+
+	
+
 }

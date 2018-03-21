@@ -11,13 +11,38 @@
 <link rel="stylesheet" type="text/css" href="<c:url value="static/css/input.css"/>">
 <script type="text/javascript" src="<c:url value="/static/js/jquery-3.3.1.min.js"/>"></script>
 <script type="text/javascript">
+
+
+
+
+
 	$().ready(function(){
 		
 		$("#email").keyup(function(){
 			var value = $(this).val();
+			
 			if ( value != "" ) {
-				$(this).removeClass("invalid");
-				$(this).addClass("valid");
+				
+				//Ajax Call (http://locahost:8080/api/exists/email)
+				  /* email 파라미터 */
+				$.post("<c:url value="/api/exists/email"/>", {
+					email : value          
+				}, function(response){
+					
+					console.log(response.response);
+					
+					if ( response.response ) {
+						$("#email").removeClass("valid");
+						$("#email").addClass("invalid");
+						
+					}
+					else {
+						$("#email").removeClass("invalid");
+						$("#email").addClass("valid");
+					}
+				});
+				/* Ajax콜을 하겠다 3가지 파라미터 있음 */ 
+										
 			}
 			else {
 				$(this).removeClass("valid");
@@ -28,8 +53,25 @@
 		$("#nickname").keyup(function(){
 			var value = $(this).val();
 			if ( value != "" ) {
-				$(this).removeClass("invalid");
-				$(this).addClass("valid");
+				
+				$.post("<c:url value="/api/exists/nickname"/>", {
+					nickname : value          
+				}, function(response){
+					
+					console.log(response.response);
+					
+					if ( response.response ) {
+						$("#nickname").removeClass("valid");
+						$("#nickname").addClass("invalid");
+						
+					}
+					else {
+						$("#nickname").removeClass("invalid");
+						$("#nickname").addClass("valid");
+					}
+				});
+
+			
 			}
 			else {
 				$(this).removeClass("valid");
@@ -103,27 +145,87 @@
 				return false;
 			}
 			
-			
-			
-			if ( $("#nickname").val() == "" ) {
-				alert("nickname을 입력하세요");
-				$("#nickname").focus();
-				$("#nickname").addClass("invalid");
+			if ( $("#email").hasClass("invalid") ) {
+				alert("작성한 이메일은 사용할 수 없습니다.1");
+				$("#email").focus();
 				return false;
 			}
 			
-			if ( $("#password").val() == "" ) {
-				alert("password를 입력하세요");
-				$("#password").focus();
-				$("#password").addClass("invalid");
-				return false;
-			}
-			
-			$("#registForm").attr({
+			else {
+				$.post("<c:url value="/api/exists/email"/>", {
+					email : $("#email").val()        
+				}, function(response){
+					
+					if ( response.response ) {
+						alert("작성한 이메일은 사용할 수 없습니다.2");
+						$("#email").focus();
+						return false;
+					}
+					
+					if ( $("#nickname").val() == "" ) {
+						alert("nickname을 입력하세요");
+						$("#nickname").focus();
+						$("#nickname").addClass("invalid");
+						return false;
+					}
+					
+					else {
+						
+						$.post("<c:url value="/api/exists/nickname"/>", {
+							nickname : $("#nickname").val()          
+						}, function(response){
+							
+							if ( response.response ) {
+								
+								alert("작성한 닉네임은 사용할 수 없습니다.2");
+								$("#nickname").removeClass("valid");
+								$("#nickname").addClass("invalid");
+								return false;
+							}
+							else {
+								$("#nickname").removeClass("invalid");
+								$("#nickname").addClass("valid");
+							}
+							
+							
+							if ( $("#password").val() == "" ) {
+								alert("password를 입력하세요");
+								$("#password").focus();
+								$("#password").addClass("invalid");
+								return false;
+							}
+							
+							
+							if ( response.response ) {
+								$("#email").removeClass("valid");
+								$("#email").addClass("invalid");
+								
+							}
+							else {
+								$("#email").removeClass("invalid");
+								$("#email").addClass("valid");
+							}
+							
+							$("#registForm").attr({
 								"method" : "post",
 								"action" : "<c:url value="/regist"/>"
 							})
 							.submit();
+							
+							
+							
+						});
+						
+					}
+					
+										
+					
+				
+					
+				});
+				/* Ajax콜을 하겠다 3가지 파라미터 있음 */ 
+			}
+			
 			
 		});
 		
