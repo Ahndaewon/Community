@@ -1,0 +1,9 @@
+a {
+	
+	color: #333;
+	text-decoration: none; /* 밑줄 사라짐 */
+	
+}
+a:hover {
+	text-decoration: underline;
+}
