@@ -7,6 +7,23 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>${community.title}</title>
+<script type="text/javascript" src="<c:url value="/static/js/jquery-3.3.1.min.js"/>"></script>
+<script type="text/javascript">
+	$().ready(function(){
+		
+		$("#writeReplyBtn").click(function(){
+			
+			$.post("<c:url value="/api/reply/${community.id}"/>",
+					$("#writeReplyFrom").serialize(),
+					function(response){
+						alert("등록됨");
+						console.log(response);
+			});
+			
+		});
+		
+	});
+</script>
 </head>
 <body>
 
@@ -30,6 +47,23 @@
 		
 		<p>${community.displayFilename}</p>
 		<P>${community.body}</P>
+		<hr />
+
+		<div id="replies"></div>
+		<div id="createReply">
+			<form id="writeReplyFrom">
+				<input type="hidden" id="parentReplyId" name="parentReplyId" value="0"/>
+				<div>
+				<textarea id="body" name="body" ></textarea>
+				</div> 
+				
+				<div>
+					<input type="button" id="writeReplyBtn" value="등록"/>
+				</div>
+			</form>
+		
+		</div>
+		
 		<p>${community.writeDate}</p>
 		<p>조회수 : ${community.viewCount}</p>
 		<c:if test="${not empty community.displayFilename }">
