@@ -8,6 +8,9 @@ public class MemberDaoImplForOracle
 									extends SqlSessionDaoSupport
 									implements MemberDao	{
 
+	
+	
+	
 	@Override
 	public int insertMember(MemberVO memberVO) {
 		
