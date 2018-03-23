@@ -3,11 +3,14 @@ package com.ktds.community.service;
 import java.util.List;
 
 import com.ktds.community.dao.CommunityDao;
+import com.ktds.community.vo.CommunitySearchVO;
 import com.ktds.community.vo.CommunityVO;
+
+import io.github.seccoding.web.pager.explorer.PageExplorer;
 
 public interface CommunityService {
 	
-	public List<CommunityVO> getAll();
+	public PageExplorer getAll(CommunitySearchVO communitySearchVO);
 	public CommunityVO getOne(int id);
 	
 	
@@ -21,5 +24,6 @@ public interface CommunityService {
 	public boolean deleteCommunity(int id);
 	public boolean updateCommunity(CommunityVO communityVO);
 	public boolean deleteCommunities(List<Integer> ids, int userId);
+	
 
 }

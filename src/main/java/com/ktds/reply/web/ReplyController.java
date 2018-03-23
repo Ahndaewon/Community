@@ -34,6 +34,8 @@ public class ReplyController {
 		return replyService.readAllReplies(communityId);
 	}
 	
+	
+	
 	@RequestMapping(value = "/api/reply/{communityId}", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> createReply(@PathVariable int communityId
@@ -44,10 +46,24 @@ public class ReplyController {
 		replyVO.setCommunityId(communityId);
 		
 		boolean isSuccess = replyService.createReply(replyVO);//아이디 값이 세팅이 되있음
+		System.out.println(isSuccess+"~~~~~~~~~~~~~~~~~~~~~~~~~!!!!!!1");
+		System.out.println(isSuccess+"~~~~~~~~~~~~~~~~~~~~~~~~~!!!!!!1");
+		System.out.println(isSuccess+"~~~~~~~~~~~~~~~~~~~~~~~~~!!!!!!1");
+		System.out.println(isSuccess+"~~~~~~~~~~~~~~~~~~~~~~~~~!!!!!!1");
+		System.out.println(isSuccess+"~~~~~~~~~~~~~~~~~~~~~~~~~!!!!!!1");
+		System.out.println(isSuccess+"~~~~~~~~~~~~~~~~~~~~~~~~~!!!!!!1");
+		
+		ReplyVO newReply = null;
+		if ( isSuccess ) {
+			System.out.println(replyVO.getId());
+			newReply = replyService.readOneReply(replyVO.getId());
+		}
+		
+		//System.out.println(newReply.getMemberVO().getEmail());
 		
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("status", isSuccess);
-		result.put("reply", replyVO);// 시퀀스 아이디가 포함된 VO
+		result.put("reply", newReply);// 시퀀스 아이디가 포함된 VO
 		
 		return result;
 		

@@ -9,5 +9,6 @@ public interface ReplyService {
 	public List<ReplyVO> readAllReplies(int communityId);
 	
 	public boolean createReply(ReplyVO replyVO);
-
+	
+	public ReplyVO readOneReply(int replyId);
 }

@@ -4,7 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ktds.community.dao.CommunityDao;
+import com.ktds.community.vo.CommunitySearchVO;
 import com.ktds.community.vo.CommunityVO;
+
+import io.github.seccoding.web.pager.Pager;
+import io.github.seccoding.web.pager.PagerFactory;
+import io.github.seccoding.web.pager.explorer.ClassicPageExplorer;
+import io.github.seccoding.web.pager.explorer.PageExplorer;
 
 public class CommunityServiceImpl implements CommunityService {
 
@@ -19,8 +25,16 @@ public class CommunityServiceImpl implements CommunityService {
 //의존 - 멤버변수 추가 생성 추가
 
 	@Override
-	public List<CommunityVO> getAll() {
-		return communityDao.sellectAll();
+	public PageExplorer getAll(CommunitySearchVO communitySearchVO) {
+		
+		Pager pager = PagerFactory.getPager(Pager.ORACLE, communitySearchVO.getPageNo()+ "",
+				communityDao.selectCountAll(communitySearchVO));
+		
+		PageExplorer pageExplorer = pager.makePageExplorer(ClassicPageExplorer.class, communitySearchVO);
+		
+		pageExplorer.setList(communityDao.selectAll(communitySearchVO));
+		
+		return pageExplorer;
 	}
 
 	@Override
@@ -78,7 +92,7 @@ public class CommunityServiceImpl implements CommunityService {
 		blackList.add("종간나세끼");
 		blackList.add("2식");
 		
-		//str  ==>  남편은 2식이에요. 
+		 
 		
 		String[] spliteString = str.split(" "); //스페이스 한칸을 기준으로 짜른다.
 		

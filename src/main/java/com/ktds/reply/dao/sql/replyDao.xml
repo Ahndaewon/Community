@@ -8,6 +8,7 @@
   		
   		<resultMap type="ReplyVO" id="ReplyVOMap">
   			<id column="R_ID" property="id"/>
+			<result column="LEVEL" property="level"/>  			
 			<result column="R_USER_ID" property="userId"/>  			
 			<result column="COMMUNITY_ID" property="communityId"/>  			
 			<result column="R_BODY" property="body"/>  			
@@ -44,7 +45,8 @@
   	
 		<select id="selectAllReplies" parameterType="_int" resultMap="ReplyVOMap" >
 		
-			SELECT	R.ID R_ID
+			SELECT	LEVEL
+					, R.ID R_ID
 					, R.USER_ID	R_USER_ID
 					, R.COMMUNITY_ID
 					, R.BODY	R_BODY
@@ -57,18 +59,21 @@
 					, C.REQUEST_IP
 					, C.DISPLAY_FILE_NAME
 					, C.USER_ID	C_USER_ID
-					, M.ID M_ID
-					, M.NICKNAME
-					, M.EMAIL
-					, M.REGIST_DATE M_REGIST_DATE
+					, R_M.ID M_ID
+					, R_M.NICKNAME
+					, R_M.EMAIL
+					, R_M.REGIST_DATE M_REGIST_DATE
 			FROM	REPLY R
 					, COMMUNITY C
-					, MEMBER M
-					<!-- , REPLY PR -->
-			WHERE	R.USER_ID = M.ID
+					, MEMBER R_M
+					, MEMBER C_M
+			WHERE	R.USER_ID = R_M.ID
 			AND		R.COMMUNITY_ID = C.ID
-			AND		M.ID = C.USER_ID		
-			<!-- AND 	R.PARENT_REPLY_ID = PR.ID -->
+			AND		C_M.ID = C.USER_ID		
+			AND		R.COMMUNITY_ID = #{commnunityId}
+			START	WITH R.PARENT_REPLY_ID = 0
+			CONNECT BY PRIOR R.ID = R.PARENT_REPLY_ID
+			ORDER	SIBLINGS BY R.ID ASC
 		
 		</select>
 		
@@ -93,8 +98,38 @@
 		</insert>
 		
 		
-  
-  	
+		<select id="selectOneReply" parameterType="_int" resultMap="ReplyVOMap" >
+		
+			SELECT	R.ID R_ID
+					, R.USER_ID	R_USER_ID
+					, R.COMMUNITY_ID
+					, R.BODY	R_BODY
+					, R.REGIST_DATE R_REGIST_DATE
+					, R.PARENT_REPLY_ID
+					, C.ID C_ID
+					, C.TITLE
+					, C.BODY C_BODY
+					, C.VIEW_COUNT
+					, C.REQUEST_IP
+					, C.DISPLAY_FILE_NAME
+					, C.USER_ID	C_USER_ID
+					, R_M.ID M_ID
+					, R_M.NICKNAME
+					, R_M.EMAIL
+					, R_M.REGIST_DATE M_REGIST_DATE
+			FROM	REPLY R
+					, COMMUNITY C
+					, MEMBER C_M
+					, MEMBER R_M
+			WHERE	R.USER_ID = R_M.ID
+			AND		R.COMMUNITY_ID = C.ID
+			AND		C_M.ID = C.USER_ID		
+			AND		R.ID = #{replyId}
+			
+		
+		</select>
+		
+	
   
   </mapper>
   

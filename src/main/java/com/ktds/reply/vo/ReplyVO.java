@@ -5,6 +5,7 @@ import com.ktds.member.vo.MemberVO;
 
 public class ReplyVO {
 
+	private int level;
 	private int id;
 	private int userId;
 	private int communityId;
@@ -13,6 +14,14 @@ public class ReplyVO {
 	private int parentReplyId;
 	MemberVO memberVO;
 	CommunityVO communityVO;
+
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
+	}
 
 	public int getId() {
 		return id;

@@ -27,10 +27,12 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.ktds.community.constants.Member;
 import com.ktds.community.service.CommunityService;
+import com.ktds.community.vo.CommunitySearchVO;
 import com.ktds.community.vo.CommunityVO;
 import com.ktds.member.vo.MemberVO;
 import com.ktds.util.DownloadUtil;
 
+import io.github.seccoding.web.pager.explorer.PageExplorer;
 import javafx.scene.input.KeyCombination.ModifierValue;
 
 @Controller
@@ -43,7 +45,7 @@ public class CommunityController {
 	}
 	
 	@RequestMapping("/")//젤 첫화면이 리스트 페이지
-	public ModelAndView viewListPage() {
+	public ModelAndView viewListPage(CommunitySearchVO communitySearchVO) {
 		
 		
 		
@@ -51,9 +53,9 @@ public class CommunityController {
 		// WEB-INF/view/community/list.jsp
 		view.setViewName("community/list");
 		
-		List<CommunityVO> communityList = communityService.getAll();
+		PageExplorer pageExplorer = communityService.getAll(communitySearchVO);
 		
-		view.addObject("communityList", communityList);
+		view.addObject("pageExplorer", pageExplorer);
 		
 		return view;
 	}

@@ -10,5 +10,7 @@ public interface ReplyDao {
 	
 	public int insertReply(ReplyVO replyVO);
 	
+	
+	public ReplyVO selectOneReply(int replyId);
 
 }
