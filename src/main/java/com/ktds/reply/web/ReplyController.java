@@ -46,12 +46,6 @@ public class ReplyController {
 		replyVO.setCommunityId(communityId);
 		
 		boolean isSuccess = replyService.createReply(replyVO);//아이디 값이 세팅이 되있음
-		System.out.println(isSuccess+"~~~~~~~~~~~~~~~~~~~~~~~~~!!!!!!1");
-		System.out.println(isSuccess+"~~~~~~~~~~~~~~~~~~~~~~~~~!!!!!!1");
-		System.out.println(isSuccess+"~~~~~~~~~~~~~~~~~~~~~~~~~!!!!!!1");
-		System.out.println(isSuccess+"~~~~~~~~~~~~~~~~~~~~~~~~~!!!!!!1");
-		System.out.println(isSuccess+"~~~~~~~~~~~~~~~~~~~~~~~~~!!!!!!1");
-		System.out.println(isSuccess+"~~~~~~~~~~~~~~~~~~~~~~~~~!!!!!!1");
 		
 		ReplyVO newReply = null;
 		if ( isSuccess ) {
