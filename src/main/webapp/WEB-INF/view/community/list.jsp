@@ -29,6 +29,7 @@
 		<jsp:include page="/WEB-INF/view/template/menu.jsp" />
 		
 		<div>
+		
 			${pageExplorer.totalCount}건의 게시글이 검색 되었습니다.
 		</div>
 		
