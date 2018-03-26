@@ -44,14 +44,37 @@ public class CommunityController {
 		this.communityService = communityService;
 	}
 	
+	
+	@RequestMapping("/reset")
+	public String viewInitListPage(HttpSession session) {
+		session.removeAttribute("__SEARCH__");
+		return "redirect:/";
+	}
+	
 	@RequestMapping("/")//젤 첫화면이 리스트 페이지
-	public ModelAndView viewListPage(CommunitySearchVO communitySearchVO) {
+	public ModelAndView viewListPage(CommunitySearchVO communitySearchVO, HttpSession session) {
 		
 		
+		//데이터가 안넘어왔을 때 
+		//1. 리스트페이지에 처음 접근했을 때
+		//2. 글 내용을 보고, 목록보기 링크를 클릭했을 때
+		
+		if ( communitySearchVO.getPageNo() < 0 ) {
+			//Session 에 저장된 CommunitySerachVO를 가져옴
+			communitySearchVO = (CommunitySearchVO) session.getAttribute("__SEARCH__");
+			//Session 에 저장된 CommunitySerachVO가 없을 경우, PageN = 0으로 초기화
+			if ( communitySearchVO == null ) {
+				communitySearchVO = new CommunitySearchVO();
+				communitySearchVO.setPageNo(0);
+			}
+			
+		}
+		session.setAttribute("__SEARCH__", communitySearchVO);
 		
 		ModelAndView view = new ModelAndView();
 		// WEB-INF/view/community/list.jsp
 		view.setViewName("community/list");
+		view.addObject("search", communitySearchVO);
 		
 		PageExplorer pageExplorer = communityService.getAll(communitySearchVO);
 		

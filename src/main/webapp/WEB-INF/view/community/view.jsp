@@ -160,7 +160,7 @@
 				
 			</p>
 		</c:if>
-		<p><a href="<c:url value="/"/>">목록으로</a></p>
+		<p><a href="<c:url value="/reset"/>">목록으로</a></p>
 		
 		<a href="<c:url value="/logout"/>">로그아웃</a>
 	</div>

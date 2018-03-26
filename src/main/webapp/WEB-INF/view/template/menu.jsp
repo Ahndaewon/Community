@@ -34,7 +34,7 @@
 		</c:if>
 		
 			<li>
-				<a href="<c:url value="/"/>">community</a>
+				<a href="<c:url value="/reset"/>">community</a>
 			</li>
 			
 			

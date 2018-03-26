@@ -34,6 +34,32 @@
 				FROM	COMMUNITY C
 						, MEMBER M
 				WHERE	C.USER_ID = M.ID(+)<!-- 데이터가 존재하지 않는 쪽에다가 붙임 조인!-->
+				AND 	WRITE_DATE <![CDATA[<=]]> SYSDATE
+				AND 	WRITE_DATE >= ADD_MONTHS(SYSDATE, -1)
+				<choose>
+					<when test="searchType == 1">
+				AND		C.TITLE LIKE '%' || #{searchKeyword} || '%'
+					</when>
+					<when test="searchType == 2">
+				AND		C.BODY LIKE '%' || #{searchKeyword} || '%'					
+					</when>
+					<when test="searchType == 3">
+				AND		( C.TITLE LIKE '%' || #{searchKeyword} || '%'					
+				OR		C.BODY LIKE '%' || #{searchKeyword} || '%' )					
+					</when>
+					<when test="searchType == 4">
+				AND		M.NICKNAME LIKE '%' || #{searchKeyword} || '%'
+					</when>
+					<when test="searchType == 5">
+				AND		M.EMAIL LIKE '%' || #{searchKeyword} || '%'	
+					</when>
+					<when test="searchType == 6">
+				AND		C.DISPLAY_FILE_NAME LIKE '%' || #{searchKeyword} || '%'
+					</when>
+					<when test="searchType == 7">
+				AND		C.DISPLAY_FILE_NAME LIKE '%.' || #{searchKeyword} 	
+					</when>
+				</choose>
 
   	</select>
   	
@@ -64,6 +90,32 @@
 								FROM	COMMUNITY C
 										, MEMBER M
 								WHERE	C.USER_ID = M.ID(+)<!-- 데이터가 존재하지 않는 쪽에다가 붙임 조인!-->
+								AND 	WRITE_DATE <![CDATA[<=]]> SYSDATE
+								AND 	WRITE_DATE >= ADD_MONTHS(SYSDATE, -1)
+								<choose>
+									<when test="searchType == 1">
+										AND		C.TITLE LIKE '%' || #{searchKeyword} || '%'
+									</when>
+									<when test="searchType == 2">
+										AND		C.BODY LIKE '%' || #{searchKeyword} || '%'					
+									</when>
+									<when test="searchType == 3">
+										AND		( C.TITLE LIKE '%' || #{searchKeyword} || '%'					
+										OR		C.BODY LIKE '%' || #{searchKeyword} || '%' )					
+									</when>
+									<when test="searchType == 4">
+										AND		M.NICKNAME LIKE '%' || #{searchKeyword} || '%'
+									</when>
+									<when test="searchType == 5">
+										AND		M.EMAIL LIKE '%' || #{searchKeyword} || '%'	
+									</when>
+									<when test="searchType == 6">
+										AND		C.DISPLAY_FILE_NAME LIKE '%' || #{searchKeyword} || '%'
+									</when>
+									<when test="searchType == 7">
+										AND		C.DISPLAY_FILE_NAME LIKE '%' || #{searchKeyword} 	
+									</when>
+								</choose>
 								ORDER	BY C.ID DESC<!-- 여기서는 세미콜론 안씀 -->
 								
 							) C
