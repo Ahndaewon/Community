@@ -20,11 +20,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.SessionScope;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ktds.actionhistory.vo.ActionHistory;
+import com.ktds.actionhistory.vo.ActionHistoryVO;
 import com.ktds.community.constants.Member;
 import com.ktds.community.service.CommunityService;
 import com.ktds.community.vo.CommunitySearchVO;
@@ -95,15 +98,31 @@ public class CommunityController {
 //	@PostMapping("/write") //spring 4.3부터 쓸수 있음
 	@RequestMapping(value = "/write", method = RequestMethod.POST)
 	public ModelAndView doWrite(@ModelAttribute("writeFrom") @Valid CommunityVO communityVO, 
-			Errors error, HttpServletRequest request) { //클래스에 맞게 스프링이 가져옴 그래서 이름을 똑같이 해줘야함
+			Errors error, HttpServletRequest request
+			,@RequestAttribute ActionHistoryVO actionHistoryVO) { //클래스에 맞게 스프링이 가져옴 그래서 이름을 똑같이 해줘야함
 		
+		ModelAndView view = new ModelAndView();
 		
 		if ( error.hasErrors() ) {
-			ModelAndView view = new ModelAndView();
 			view.setViewName("community/write");
 			view.addObject("communityVO", communityVO);
 			return view;
 		}
+		
+		/*ActionHistoryVO history = 
+				(ActionHistoryVO) request.getAttribute(Member.USER);
+		history.setReqType(ActionHistory.ReqType.COMMUNITY);
+		
+		String log = String.format(ActionHistory.Log.WRITE
+					, communityVO.getTitle(), communityVO.getBody());
+		
+		history.setLog(log);*/
+		
+		actionHistoryVO.setReqType(ActionHistory.ReqType.COMMUNITY);
+		String log = String.format(ActionHistory.Log.WRITE, communityVO.getTitle(), communityVO.getBody());
+		actionHistoryVO.setLog(log);
+		
+		
 		
 		String requestIp = request.getRemoteAddr();
 		communityVO.setRequestIP(requestIp);
@@ -135,9 +154,14 @@ public class CommunityController {
 	
 	
 	@RequestMapping("/recommend/{id}")
-	public String recommend( @PathVariable int id) {
+	public String recommend( @PathVariable int id,
+								@RequestAttribute ActionHistoryVO actionHistoryVO) {
 		
-				
+		
+		actionHistoryVO.setReqType(ActionHistory.ReqType.COMMUNITY);
+		String log = String.format(ActionHistory.Log.RECOMMEND, id);
+		actionHistoryVO.setLog(log);
+		
 		communityService.recommend(id);
 		
 		return "redirect:/view/"+id;
@@ -219,9 +243,13 @@ public class CommunityController {
 								HttpSession session,
 								@ModelAttribute("writeFrom") @Valid CommunityVO communityVO,
 								Errors errors,
-								HttpServletRequest request) {
+								HttpServletRequest request,
+								@RequestAttribute ActionHistoryVO actionHistoryVO) {
 		MemberVO member = (MemberVO) session.getAttribute(Member.USER);
 		CommunityVO originalVO = communityService.getOne(id);
+		String asIs ="";
+		String toBe ="";
+		
 		
 		if ( member.getId() != originalVO.getUserId() ) {	//내글이 맞는지
 			return "error/404";
@@ -248,6 +276,9 @@ public class CommunityController {
 		if ( !ip.equals(originalVO.getRequestIP() ) ) {
 			newCommunity.setRequestIP(ip);
 			isModify = true;
+			asIs += "ip : " + originalVO.getRequestIP() + "<br/>";
+			toBe += "ip : " + communityVO.getRequestIP() + "<br/>";
+			
 		}
 		
 		// 2. 제목 변경 확인
@@ -255,6 +286,8 @@ public class CommunityController {
 		if ( !originalVO.getTitle().equals( communityVO.getTitle() ) ) {
 			newCommunity.setTitle( communityVO.getTitle() );
 			isModify = true;
+			asIs += "Title : " + originalVO.getTitle() + "<br/>";
+			toBe += "Title : " + communityVO.getTitle() + "<br/>";
 		}
 		// 3. 내용변경 확인
 		if ( !originalVO.getBody().equals( communityVO.getBody() ) ) {
@@ -264,6 +297,8 @@ public class CommunityController {
 			
 			newCommunity.setBody( communityVO.getBody() );
 			isModify = true;
+			asIs += "body : " + originalVO.getBody() + "<br/>";
+			toBe += "body : " + communityVO.getBody() + "<br/>";
 		}
 		
 		if( communityVO.getDisplayFilename().length() > 0 ) {
@@ -271,6 +306,8 @@ public class CommunityController {
 					new File("D:\\uploadFiles/"+ communityVO.getDisplayFilename());
 			file.delete();
 			communityVO.setDisplayFilename("");
+			asIs += "file : " + originalVO.getDisplayFilename() + "<br/>";
+			toBe += "file : " + communityVO.getDisplayFilename() + "<br/>";
 		}
 		else {
 			communityVO.setDisplayFilename(originalVO.getDisplayFilename() );
@@ -282,6 +319,8 @@ public class CommunityController {
 		if ( !originalVO.getDisplayFilename().equals( communityVO.getDisplayFilename()) ) {
 			newCommunity.setDisplayFilename( communityVO.getDisplayFilename() );
 			isModify = true;
+			asIs += "file : " + originalVO.getDisplayFilename() + "<br/>";
+			toBe += "file : " + communityVO.getDisplayFilename() + "<br/>";
 		}
 		
 		// 5. 변경이 없는지 확인
@@ -290,6 +329,13 @@ public class CommunityController {
 			communityService.updateCommunity(newCommunity);
 			
 		}
+		
+		actionHistoryVO.setReqType(ActionHistory.ReqType.COMMUNITY);
+		String log = String.format(ActionHistory.Log.UPDATE, communityVO.getTitle(), communityVO.getBody());
+		actionHistoryVO.setLog(log);
+		actionHistoryVO.setAsIs(asIs);
+		actionHistoryVO.setToBe(toBe);
+		
 		
 		return "redirect:/view/" + id;
 	}

@@ -12,15 +12,20 @@ import javax.swing.plaf.synth.SynthSeparatorUI;
 import javax.validation.Valid;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ktds.actionhistory.service.ActionHistoryService;
+import com.ktds.actionhistory.vo.ActionHistory;
+import com.ktds.actionhistory.vo.ActionHistoryVO;
 import com.ktds.community.constants.Member;
 import com.ktds.community.service.CommunityService;
 import com.ktds.member.service.MemberService;
@@ -31,8 +36,6 @@ public class MemberController {
 	
 	private MemberService memberService; //의존 만들어줌
 	private CommunityService communityService;
-	
-	
 	
 	
 	public void setCommunityService(CommunityService communityService) {
@@ -87,11 +90,14 @@ public class MemberController {
 	
 	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
-	public String viewLoginPage(HttpSession sesstion) { //세션을 바로 가지고 올 수 있음
+	public String viewLoginPage(HttpSession session, @RequestAttribute ActionHistoryVO actionHistoryVO) { //세션을 바로 가지고 올 수 있음
 		
-		if( sesstion.getAttribute(Member.USER) != null ) {
+	
+		if( session.getAttribute(Member.USER) != null ) {
 			return "redirect:/";
+			
 		}//로그인이 필요한 페이지에 모두 넣어주면됨
+		
 		
 		return "member/login";
 	}
@@ -105,28 +111,84 @@ public class MemberController {
 	}
 	
 	@RequestMapping(value = "/regist", method = RequestMethod.POST)
-	public ModelAndView doRegistAction(@ModelAttribute("registForm")
-									@Valid MemberVO memberVO, Errors errors) {
+	public String doRegistAction(@ModelAttribute("registForm")
+									@Valid MemberVO memberVO, Errors errors
+									, @RequestAttribute ActionHistoryVO actionHistoryVO) {
 		
 		if ( errors.hasErrors() ) {
-			return new ModelAndView("member/regist");
+			return "member/regist";
 			
 		}
 		
-		if ( memberService.createMember(memberVO) ) {
-			return new ModelAndView("redirect:/login");
-		}
 		
-		return new ModelAndView("redirect:/login");
+		if ( memberService.createMember(memberVO) ) {
+			actionHistoryVO.setReqType(ActionHistory.ReqType.MEMBER);
+			String log = String.format(ActionHistory.Log.REGIST, memberVO.getEmail(), memberVO.getNickname(), "true");
+			actionHistoryVO.setLog(log);
+			return "redirect:/login";
+		}
+		actionHistoryVO.setReqType(ActionHistory.ReqType.MEMBER);
+		String log = String.format(ActionHistory.Log.REGIST, memberVO.getEmail(), memberVO.getNickname() ,"false");
+		actionHistoryVO.setLog(log);
+		return "redirect:/login";
 	}
 	
+	
+	/*@RequestMapping("/logout")
+	public String doLogoutAction(HttpSession session, HttpServletRequest request, Model model) {
+		
+		MemberVO member = (MemberVO)session.getAttribute(Member.USER);
+		
+		
+		ActionHistoryVO history = 
+				(ActionHistoryVO) request.getAttribute("actionHistory");
+		
+		history.setReqType(ActionHistory.ReqType.MEMBER);
+		
+		String log = String.format(ActionHistory.Log.LOGOUT, member.getEmail());
+		history.setLog(log);
+		model.addAttribute("actionHistory", history);
+		//삭제는 하나의 키만 지우는 것
+		//세션 소멸 - 세션자체를 날림
+		
+		session.invalidate();
+		return "redirect:/login";
+		
+	}*/
+	
+	@RequestMapping("/logout")
+	public String doLogoutAction(HttpSession session, @RequestAttribute ActionHistoryVO actionHistoryVO) {
+		
+		MemberVO member = (MemberVO)session.getAttribute(Member.USER);
+		
+		
+		
+		actionHistoryVO.setReqType(ActionHistory.ReqType.MEMBER);
+		String log = String.format(ActionHistory.Log.LOGOUT, member.getEmail());
+		actionHistoryVO.setLog(log);
+		
+		//삭제는 하나의 키만 지우는 것
+		//세션 소멸 - 세션자체를 날림
+		
+		session.invalidate();
+		return "redirect:/login";
+		
+	}
 	
 	
 	@RequestMapping(value="/login", method=RequestMethod.POST)
 	public String doLoginAction(@ModelAttribute("loginForm") @Valid MemberVO memberVO, 
-					Errors error, HttpServletRequest request) {
+					Errors error, HttpServletRequest request, Model model) {
 
 		HttpSession session = request.getSession();
+		
+		ActionHistoryVO history = 
+				(ActionHistoryVO) request.getAttribute("actionHistory");
+		history.setReqType(ActionHistory.ReqType.MEMBER);
+		
+		String log = String.format(ActionHistory.Log.LOGIN, memberVO.getEmail());
+		history.setLog(log);
+		model.addAttribute("actionHistory", history);
 		
 		MemberVO loginMember = memberService.readMember(memberVO);
 		if ( loginMember != null ) {
@@ -180,17 +242,7 @@ public class MemberController {
 	
 	}
 	
-	@RequestMapping("/logout")
-	public String doLogoutAction(HttpSession session) {
-		
-		//삭제는 하나의 키만 지우는 것
-		//세션 소멸 - 세션자체를 날림
-		
-		session.invalidate();
-		return "redirect:/login";
-		
-	}
-	
+
 	@RequestMapping("/leave/process1")
 	public String viewVerifyPage() {
 		
