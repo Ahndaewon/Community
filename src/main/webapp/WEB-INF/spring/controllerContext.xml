@@ -27,5 +27,10 @@
 		  <property name="replyService" ref="replyService"></property>
 	</bean>
 	
+	<bean id="ActionHistoryController"
+		  class="com.ktds.actionhistory.web.ActionHistoryController">
+		  <property name="actionHistoryService" ref="ActionHistoryService"></property>
+	</bean>
+	
 
 </beans>

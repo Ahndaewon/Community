@@ -8,6 +8,7 @@
 	<enableImports><![CDATA[false]]></enableImports>
 	<configs>
 		<config>src/main/webapp/WEB-INF/spring/replyContext.xml</config>
+		<config>src/main/webapp/WEB-INF/spring/actionHistoryContext.xml</config>
 	</configs>
 	<autoconfigs>
 		<config>src/main/webapp/WEB-INF/spring/memberContext.xml</config>
