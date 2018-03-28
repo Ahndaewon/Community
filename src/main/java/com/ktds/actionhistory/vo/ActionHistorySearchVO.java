@@ -3,9 +3,9 @@ package com.ktds.actionhistory.vo;
 import io.github.seccoding.web.pager.annotations.EndRow;
 import io.github.seccoding.web.pager.annotations.StartRow;
 
-public class ActionHistorySearChVO {
+public class ActionHistorySearchVO {
 
-	private int pageNo;
+	private int pageNo = -1;
 
 	@StartRow
 	private int startRow;
@@ -14,7 +14,15 @@ public class ActionHistorySearChVO {
 	private int endRow;
 
 	private String startDate;
+	private String startDateYear;
+	private String startDateMonth;
+	private String startDateDate;
+
 	private String endDate;
+	private String endDateYear;
+	private String endDateMonth;
+	private String endDateDate;
+
 	private String requestType;
 	private String ip;
 	private String email;
@@ -55,12 +63,60 @@ public class ActionHistorySearChVO {
 		this.startDate = startDate;
 	}
 
+	public String getStartDateYear() {
+		return startDateYear;
+	}
+
+	public void setStartDateYear(String startDateYear) {
+		this.startDateYear = startDateYear;
+	}
+
+	public String getStartDateMonth() {
+		return startDateMonth;
+	}
+
+	public void setStartDateMonth(String startDateMonth) {
+		this.startDateMonth = startDateMonth;
+	}
+
+	public String getStartDateDate() {
+		return startDateDate;
+	}
+
+	public void setStartDateDate(String startDateDate) {
+		this.startDateDate = startDateDate;
+	}
+
 	public String getEndDate() {
 		return endDate;
 	}
 
 	public void setEndDate(String endDate) {
 		this.endDate = endDate;
+	}
+
+	public String getEndDateYear() {
+		return endDateYear;
+	}
+
+	public void setEndDateYear(String endDateYear) {
+		this.endDateYear = endDateYear;
+	}
+
+	public String getEndDateMonth() {
+		return endDateMonth;
+	}
+
+	public void setEndDateMonth(String endDateMonth) {
+		this.endDateMonth = endDateMonth;
+	}
+
+	public String getEndDateDate() {
+		return endDateDate;
+	}
+
+	public void setEndDateDate(String endDateDate) {
+		this.endDateDate = endDateDate;
 	}
 
 	public String getRequestType() {

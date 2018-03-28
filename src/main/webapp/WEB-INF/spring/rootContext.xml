@@ -62,8 +62,7 @@
 		<aop:advisor advice-ref="rollbackRule" pointcut-ref="pointCut"/>
 	</aop:config>
 	
-	
-	
+		
 	
 
 <!-- 	DB연결 -->
@@ -74,7 +73,6 @@
 		  <property name="username" value="history" />
 		  <property name="password" value="history" />
 	</bean>
-
 
 
 	<!-- mybatis 설정

@@ -90,7 +90,7 @@ public class MemberController {
 	
 	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
-	public String viewLoginPage(HttpSession session, @RequestAttribute ActionHistoryVO actionHistoryVO) { //세션을 바로 가지고 올 수 있음
+	public String viewLoginPage(HttpSession session) { //세션을 바로 가지고 올 수 있음
 		
 	
 		if( session.getAttribute(Member.USER) != null ) {

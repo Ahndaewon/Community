@@ -9,6 +9,8 @@
 <script type="text/javascript">
 	$().ready(function(){
 		
+	
+		
 		$("#searchKeyword").keyup(function(event){
 			if ( event.key == "enter" ) {
 				/*엔터누르면 submit 되버림 input 하나일때  */
@@ -100,6 +102,8 @@
 		
 		<div>
 			<a href="<c:url value="/write"/>"/>글쓰기</a>
+			<a href="<c:url value="/admin/actionhistory"/>"/>test</a>
+			
 		</div>
 		
 	</div>
